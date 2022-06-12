@@ -113,6 +113,47 @@ void print_wall(){	//printing elments that do not change with time on screen
 	}
 }
 
+void move_snake(int move,char direction){//moviing my snake //v-vertical, 1=up,-1=down
+	int i,j;
+	if(direction=='v'){
+		snake.push_back(snake[snake.end()-2-snake.begin()]+move);
+		snake.push_back(snake[snake.end()-2-snake.begin()]);
+	}
+	else{
+		snake.push_back(snake[snake.end()-2-snake.begin()]);
+		snake.push_back(snake[snake.end()-2-snake.begin()]+move);
+	}
+	setcursor(snake[1]+1,snake[0]+2);       // printing space behind snake's body black
+	if(colour) 				setConsoleColour(consolebackground::BLACK);
+	cout<<" ";
+	snake.erase(snake.begin());//deleting snake back, vector begin indicates back of snake
+	snake.erase(snake.begin());
+	
+	setcursor(snake.back()+1,snake[snake.end()-snake.begin()-2]+2);//printing snake
+	if(colour){//head of snake
+		setConsoleColour(consolebackground::WHITE);
+		cout<<" ";
+	}
+	
+	setcursor(snake[snake.end()-snake.begin()-3]+1,snake[snake.end()-snake.begin()-4]+2); //body of snake
+	if(colour){
+		setConsoleColour(consolebackground::RED);
+		cout<<" ";
+	}
+}
+
+void eat_food(){//eating food and generating new food
+	food_x=rand()%(width);
+	food_y=rand()%(lenght);
+	setcursor(food_y+1,food_x+2);
+	if(colour){
+		setConsoleColour(consolebackground::GREEN);
+		cout<<" ";
+	}
+	snake.insert(snake.begin(),snake[1]);//incresing length of snake if food is eaten
+	snake.insert(snake.begin(),snake[1]);
+}
+
 int main(){
   
 }
