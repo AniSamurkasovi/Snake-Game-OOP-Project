@@ -154,6 +154,104 @@ void eat_food(){//eating food and generating new food
 	snake.insert(snake.begin(),snake[1]);
 }
 
+bool check_interbody_death(){//to check if snake died by touching its own body or not
+	int x,y,i;
+	bool j=0;
+	x=snake[snake.end()-snake.begin()-2];//x cordinate of snake mouth
+	y=snake.back();						 //y cordinate of snake mouth
+	for(i=0;i<snake.size()-2;i=i+2){	 //checking with body array
+		if(x==snake[i] && y==snake[i+1]){
+			j=1;
+			break;
+		}
+	}
+	return j;
+}
+
+void pause_menu(){// to print pause menu
+	if(colour){
+		setcursor(1,(width-5)/2+2);
+		setConsoleColour(consolebackground::WHITE);
+		for(int i=0;i<lenght;i++) 						cout<<" ";
+		setcursor(1,(width-5)/2+3);
+		for(int i=0;i<(lenght-11)/2;i++) 				cout<<" ";
+		cout<<"GAME PAUSED";
+		for(int i=0;i<lenght-11-(lenght-11)/2;i++)		cout<<" ";
+		setcursor(1,(width-5)/2+4);
+		for(int i=0;i<lenght;i++) 						cout<<" ";
+		setcursor(1,(width-5)/2+5);
+		for(int i=0;i<(lenght-21)/2;i++) 				cout<<" ";
+		cout<<"PRESS 'P' TO CONTINUE";
+		for(int i=0;i<lenght-21-(lenght-21)/2;i++) 		cout<<" ";
+		setcursor(1,(width-5)/2+6);
+		for(int i=0;i<lenght;i++) 						cout<<" ";
+	}
+}
+void remove_pause(){// to remove th eprinted pausee menu
+	if(colour){
+		setcursor(1,(width-5)/2+2);
+		setConsoleColour(consolebackground::BLACK);
+		for(int i=0;i<5;i++){
+			setcursor(1,(width-1)/2+i);
+			for(int j=0;j<lenght;j++)					cout<<" ";
+		}
+	}
+	setcursor(food_y+1,food_x+2);//printing food again, if food is below pause menu, then it would have become blank
+	if(colour){
+		setConsoleColour(consolebackground::GREEN);
+		cout<<" ";
+	}
+}
+
+
 int main(){
-  
+  cin.tie(NULL);//to gain mannual flush control
+	cout.tie(NULL);//to gain mannual flush control
+	srand(time(0));//to generate random numbers, diiferent every time
+	hidecursor();
+	// WELCOME SCREEN
+	restart_game://goto statement, came from last
+		food_eaten=1;
+		system("cls");//to clean the screen 
+		print_wall();
+		initialise_snake();
+		eat_food();
+		int i1=80,i2=80;//key press
+		while(i1!=99){
+			if(kbhit()){//if a key press is detected
+				i1=getch();//take the buffer of keyboard
+				if(i1==72 && (i2!=80 || reverse_snake))				i2=i1,move_snake(-1,'v');
+				else if(i1==80 && (i2!=72 || reverse_snake))			i2=i1,move_snake(1,'v');
+				else if(i1==75 && (i2!=77 || reverse_snake))			i2=i1,move_snake(-1,'h');
+				else if(i1==77 && (i2!=75 || reverse_snake))			i2=i1,move_snake(1,'h');
+				else if(i1==112){//112- p
+					// PAUSE MENU
+					while(1){//to not remove pause menu untill p is pressed again
+						i1=getch();
+						if(i1==112)
+						break;
+					}
+					// REMOVE PAUSE MENU         //to clear the screen
+				}
+				else 								goto congo;//if other than arrow key are pressed
+			}
+			else{												//if no key is pressed
+				congo:
+				if(i2==72 )							move_snake(-1,'v');
+				else if(i2==80)						move_snake(1,'v');
+				else if(i2==75)						move_snake(-1,'h');
+				else if(i2==77)						move_snake(1,'h');
+			}
+			// IF SNAKE DIED BY COLLIDING WITH ITS BODY
+			//body collision
+			if(snake.back()>lenght-1 || snake.back()<0 || snake[snake.end()-snake.begin()-2]<0 || snake[snake.end()-snake.begin()-2]>width-1)		break;//wall collision
+			if(food_y==snake.back() && food_x==snake[snake.end()-2-snake.begin()])																	eat_food();
+			print_highscore();
+			Sleep(time1);//for defficulty
+		}
+		int result;//keypress at last screen
+		print_final:
+			// FINAL MESSAGE SCREEN //bringing keyoress from function
+			if(result!=27)//if any key is pressed other than esc
+				goto restart_game;
 }
