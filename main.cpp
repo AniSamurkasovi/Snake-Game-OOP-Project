@@ -51,11 +51,17 @@ namespace consolebackground//for background colour,  colours made using 4 attrib
 
 
 
-
 vector<int> snake;					//snake vector, to store position of snake in numbers
 bool food_eaten=1,colour=1,kids=0,self_hit=1,reverse_snake=0;//for settings
 int width=27,lenght=118,food_x=-1,food_y=-2,hsc,time1=20; //hsc- high score
 
+void initialise_snake(){//making my starting snake
+	snake.clear();
+	for(int i=0;i<2;i++){//loop to initialse snake,
+		snake.push_back(0);//x cordinate
+		snake.push_back(i);//y cordinate
+	}
+}
 
 void hidecursor()//to hide the cursor in console window
 {
@@ -111,6 +117,13 @@ void print_wall(){	//printing elments that do not change with time on screen
 		for(int i=0;i<lenght+2;i++)
 		cout<<" ";
 	}
+}
+
+void print_highscore(){//printing high score(changes with time
+	int i,j;
+	setcursor(11,0);
+	setConsoleColour(consoleforeground::WHITE);
+	cout<<snake.size()/2-3<<"  ";//-3 because the initial size of snake is 3
 }
 
 void move_snake(int move,char direction){//moviing my snake //v-vertical, 1=up,-1=down
