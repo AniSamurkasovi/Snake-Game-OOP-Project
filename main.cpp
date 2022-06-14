@@ -50,7 +50,6 @@ namespace consolebackground//for background colour,  colours made using 4 attrib
 }
 
 
-
 vector<int> snake;					//snake vector, to store position of snake in numbers
 bool food_eaten=1,colour=1,kids=0,self_hit=1,reverse_snake=0;//for settings
 int width=27,lenght=118,food_x=-1,food_y=-2,hsc,time1=20; //hsc- high score
@@ -60,7 +59,7 @@ void initialise_snake(){//making my starting snake
 	for(int i=0;i<2;i++){//loop to initialse snake,
 		snake.push_back(0);//x cordinate
 		snake.push_back(i);//y cordinate
-	}
+	}   // pushing starting x and y coordinates into snake vector
 }
 
 void hidecursor()//to hide the cursor in console window
@@ -71,14 +70,14 @@ void hidecursor()//to hide the cursor in console window
    info.bVisible = FALSE;		//can be made TRUE to show if want
    SetConsoleCursorInfo(consoleHandle, &info);
 }
-void setConsoleColour(unsigned short colour)//function to set colour
+void setConsoleColour(unsigned short colour) //function to set colour
 {    // this is a function to print space with color
     static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     std::cout.flush();
     SetConsoleTextAttribute(hOut, colour);
 }
 void setcursor(int x, int y)//functiom  to set the position of cursor in console(0 indexing)
-{   // we need this function to set cursor and control where snake is
+{   // we need this function to set cursor and control where should be screen be colored
     static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
     std::cout.flush();
     COORD coord = { (SHORT)x, (SHORT)y };
@@ -90,33 +89,26 @@ void print_wall(){	//printing elments that do not change with time on screen
 	setcursor(0,0);
 	setConsoleColour(consoleforeground::DARKYELLOW);
 	cout<<"YOUR SCORE:                     ";
-	if(time1==20)		cout<<"HIGH";
-	else if(time1==50)	cout<<"MEDIUM";
-	else if(time1==80)	cout<<"LOW";
-	else 				{
-		cout<<"Custom: ";
-		setConsoleColour(consoleforeground::WHITE);
-		cout<<time1<<" ms";
-	}
+	if(time1>=20 && time1<50)	cout<<"HIGH";
+	else if(time1>=50 && time1<80)	cout<<"MEDIUM";
+	else if(time1>=80)	cout<<"LOW";
 	cout<<"\n";
-	//printing walls
-	if(colour){
-		setConsoleColour(consolebackground::CYAN);
-		for(int i=0;i<lenght+2;i++)
-		cout<<" ";
-		cout<<"\n";
-		for(int i=0;i<width;i++){
-			for(int j=0;j<lenght+2;j++){
-				if(j==0  || j==lenght+1)	setConsoleColour(consolebackground::CYAN);
-				else	 					setConsoleColour(consolebackground::BLACK);
-				cout<<" ";
-			}
-			cout<<"\n";
+	//printing wall
+	setConsoleColour(consolebackground::CYAN);
+	for(int i=0;i<lenght+2;i++)
+	cout<<" ";
+	cout<<"\n";
+	for(int i=0;i<width;i++){
+		for(int j=0;j<lenght+2;j++){
+			if(j==0  || j==lenght+1)	setConsoleColour(consolebackground::CYAN);
+			else	 			setConsoleColour(consolebackground::BLACK);
+			cout<<" ";
 		}
-		setConsoleColour(consolebackground::CYAN);
-		for(int i=0;i<lenght+2;i++)
-		cout<<" ";
+		cout<<"\n";
 	}
+	setConsoleColour(consolebackground::CYAN);
+	for(int i=0;i<lenght+2;i++)
+	cout<<" ";
 }
 
 void print_highscore(){//printing high score(changes with time
@@ -137,32 +129,27 @@ void move_snake(int move,char direction){//moviing my snake //v-vertical, 1=up,-
 		snake.push_back(snake[snake.end()-2-snake.begin()]+move);
 	}
 	setcursor(snake[1]+1,snake[0]+2);       // printing space behind snake's body black
-	if(colour) 				setConsoleColour(consolebackground::BLACK);
+	setConsoleColour(consolebackground::BLACK);
 	cout<<" ";
 	snake.erase(snake.begin());//deleting snake back, vector begin indicates back of snake
 	snake.erase(snake.begin());
 	
 	setcursor(snake.back()+1,snake[snake.end()-snake.begin()-2]+2);//printing snake
-	if(colour){//head of snake
-		setConsoleColour(consolebackground::WHITE);
-		cout<<" ";
-	}
+	//head of snake
+	setConsoleColour(consolebackground::WHITE);
+	cout<<" ";
 	
 	setcursor(snake[snake.end()-snake.begin()-3]+1,snake[snake.end()-snake.begin()-4]+2); //body of snake
-	if(colour){
-		setConsoleColour(consolebackground::RED);
-		cout<<" ";
-	}
+	setConsoleColour(consolebackground::RED);
+	cout<<" ";
 }
 
 void eat_food(){//eating food and generating new food
 	food_x=rand()%(width);
 	food_y=rand()%(lenght);
 	setcursor(food_y+1,food_x+2);
-	if(colour){
-		setConsoleColour(consolebackground::GREEN);
-		cout<<" ";
-	}
+	setConsoleColour(consolebackground::GREEN);
+	cout<<" ";
 	snake.insert(snake.begin(),snake[1]);//incresing length of snake if food is eaten
 	snake.insert(snake.begin(),snake[1]);
 }
@@ -181,8 +168,7 @@ bool check_interbody_death(){//to check if snake died by touching its own body o
 	return j;
 }
 
-void pause_menu(){// to print pause menu
-	if(colour){
+void pause_menu(){// to print pause menu	
 		setcursor(1,(width-5)/2+2);
 		setConsoleColour(consolebackground::WHITE);
 		for(int i=0;i<lenght;i++) 						cout<<" ";
@@ -198,7 +184,6 @@ void pause_menu(){// to print pause menu
 		for(int i=0;i<lenght-21-(lenght-21)/2;i++) 		cout<<" ";
 		setcursor(1,(width-5)/2+6);
 		for(int i=0;i<lenght;i++) 						cout<<" ";
-	}
 }
 
 void welcome_to(){//printing welcome screen
@@ -232,19 +217,15 @@ int print_final_message(){//printing final message screen
 }
 
 void remove_pause(){// to remove th eprinted pausee menu
-	if(colour){
-		setcursor(1,(width-5)/2+2);
-		setConsoleColour(consolebackground::BLACK);
-		for(int i=0;i<5;i++){
-			setcursor(1,(width-1)/2+i);
-			for(int j=0;j<lenght;j++)					cout<<" ";
-		}
+	setcursor(1,(width-5)/2+2);
+	setConsoleColour(consolebackground::BLACK);
+	for(int i=0;i<5;i++){
+		setcursor(1,(width-1)/2+i);
+		for(int j=0;j<lenght;j++)					cout<<" ";
 	}
-	setcursor(food_y+1,food_x+2);//printing food again, if food is below pause menu, then it would have become blank
-	if(colour){
-		setConsoleColour(consolebackground::GREEN);
-		cout<<" ";
-	}
+	setcursor(food_y+1,food_x+2); //printing food again, if food is below pause menu, then it would have become blank
+	setConsoleColour(consolebackground::GREEN);
+	cout<<" ";
 }
 
 
@@ -260,7 +241,7 @@ int main(){
 		print_wall();
 		initialise_snake();
 		eat_food();
-		int i1=80,i2=80;//key press
+		int i1=80,i2=80;   //key press
 		while(i1!=99){
 			if(kbhit()){//if a key press is detected
 				i1=getch();//take the buffer of keyboard
@@ -277,24 +258,24 @@ int main(){
 					}
 					remove_pause();       //to clear the screen
 				}
-				else 								goto congo;//if other than arrow key are pressed
+				else 	goto congo;//if other than arrow key are pressed
 			}
-			else{												//if no key is pressed
+			else{	//if no key is pressed
 				congo:
-				if(i2==72 )							move_snake(-1,'v');
-				else if(i2==80)						move_snake(1,'v');
-				else if(i2==75)						move_snake(-1,'h');
-				else if(i2==77)						move_snake(1,'h');
+				if(i2==72 )		move_snake(-1,'v');
+				else if(i2==80)	        move_snake(1,'v');
+				else if(i2==75)		move_snake(-1,'h');
+				else if(i2==77)		move_snake(1,'h');
 			}
-			if(check_interbody_death() && !reverse_snake && self_hit)																				break;//body collision
-			if(snake.back()>lenght-1 || snake.back()<0 || snake[snake.end()-snake.begin()-2]<0 || snake[snake.end()-snake.begin()-2]>width-1)		break;//wall collision
-			if(food_y==snake.back() && food_x==snake[snake.end()-2-snake.begin()])																	eat_food();
+			if(check_interbody_death() && !reverse_snake && self_hit)	break;//body collision
+			if(snake.back()>lenght-1 || snake.back()<0 || snake[snake.end()-snake.begin()-2]<0 || snake[snake.end()-snake.begin()-2]>width-1)     break;//wall collision
+			if(food_y==snake.back() && food_x==snake[snake.end()-2-snake.begin()])	   eat_food();
 			print_highscore();
-			Sleep(time1);//for defficulty
+			Sleep(time1);   //for defficulty
 		}
 		int result;//keypress at last screen
 		print_final:
 			result=print_final_message();   // print final screen
-			if(result!=27)//if any key is pressed other than esc
+			if(result!=27)  //if any key is pressed other than esc
 				goto restart_game;
 }
