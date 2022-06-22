@@ -2,7 +2,6 @@
 #include<vector>
 #include<conio.h>
 #include<time.h>
-#include<synchapi.h>
 #include<algorithm>
 #include <windows.h>
 using namespace std;
@@ -51,8 +50,8 @@ namespace consolebackground//for background colour,  colours made using 4 attrib
 
 
 vector<int> snake;					//snake vector, to store position of snake in numbers
-bool food_eaten=1,colour=1,kids=0,self_hit=1,reverse_snake=0;//for settings
-int width=27,lenght=118,food_x=-1,food_y=-2,hsc,time1=20; //hsc- high score
+bool food_eaten=1,colour=1,self_hit=1,reverse_snake=0;//for settings
+int width=27,lenght=118,food_x=-1,food_y=-2,hsc,time1=50; //hsc- high score
 
 void initialise_snake(){//making my starting snake
 	snake.clear();
@@ -70,18 +69,18 @@ void hidecursor()//to hide the cursor in console window
    info.bVisible = FALSE;		//can be made TRUE to show if want
    SetConsoleCursorInfo(consoleHandle, &info);
 }
-void setConsoleColour(unsigned short colour) //function to set colour
+void setConsoleColour(unsigned short colour) //function to set colour on the screen
 {    // this is a function to print space with color
-    static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
-    std::cout.flush();
+    static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);      // gets a handle to the output on the screen
+    std::cout.flush();                        // cout.flush() forces everything on the buffer to be written on terminal
     SetConsoleTextAttribute(hOut, colour);
 }
 void setcursor(int x, int y)//functiom  to set the position of cursor in console(0 indexing)
 {   // we need this function to set cursor and control where should be screen be colored
-    static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);
+    static const HANDLE hOut = GetStdHandle(STD_OUTPUT_HANDLE);    // gets a handle to the output on the screen
     std::cout.flush();
-    COORD coord = { (SHORT)x, (SHORT)y };
-    SetConsoleCursorPosition(hOut, coord);
+    COORD coord = { (SHORT)x, (SHORT)y };             // hold screen's x and y coordinates
+    SetConsoleCursorPosition(hOut, coord);            // set output to the screen coordinates
 }
 
 void print_wall(){	//printing elments that do not change with time on screen
@@ -186,21 +185,33 @@ void pause_menu(){// to print pause menu
 		for(int i=0;i<lenght;i++) 						cout<<" ";
 }
 
+void remove_pause(){// to remove th eprinted pausee menu
+	setcursor(1,(width-5)/2+2);
+	setConsoleColour(consolebackground::BLACK);
+	for(int i=0;i<5;i++){
+		setcursor(1,(width-1)/2+i);
+		for(int j=0;j<lenght;j++)					cout<<" ";
+	}
+	setcursor(food_y+1,food_x+2); //printing food again, if food is below pause menu, then it would have become blank
+	setConsoleColour(consolebackground::GREEN);
+	cout<<" ";
+}
+
 void welcome_to(){//printing welcome screen
 	system("cls");//clearing screen
 	setConsoleColour(consoleforeground::BLUE);
 	int a;
 	bool t=1;
 	cout<<"\n\n\n\n\n\n\n\n\n                                       WELCOME TO MY SNAKE GAME\n\n";
-	/* cout<<"                         Press S to open settings, any other key to  continue\n";*/
+	cout<<"                                  Press any other key to  continue\n";
 	cout<<"                              During game, press 'p' to pause the game\n";
 	cout<<"                               During game, press 'C' to end the game";
-	a=getch();
+	a=getch();          // getch reads user input and returns value of it
 }
 
 int print_final_message(){//printing final message screen
-	setConsoleColour(consoleforeground::BLACK);
-	system("cls");
+	setConsoleColour(consoleforeground::BLACK);  
+	system("cls");     // make screen clear
 	setConsoleColour(consoleforeground::MAGENTA);
 	int a=snake.size()/2-3,k;
 	if(a>hsc)
@@ -216,17 +227,6 @@ int print_final_message(){//printing final message screen
 	return a;
 }
 
-void remove_pause(){// to remove th eprinted pausee menu
-	setcursor(1,(width-5)/2+2);
-	setConsoleColour(consolebackground::BLACK);
-	for(int i=0;i<5;i++){
-		setcursor(1,(width-1)/2+i);
-		for(int j=0;j<lenght;j++)					cout<<" ";
-	}
-	setcursor(food_y+1,food_x+2); //printing food again, if food is below pause menu, then it would have become blank
-	setConsoleColour(consolebackground::GREEN);
-	cout<<" ";
-}
 
 
 int main(){
@@ -241,14 +241,14 @@ int main(){
 		print_wall();
 		initialise_snake();
 		eat_food();
-		int i1=80,i2=80;   //key press
+		int i1=80,i2=80;   //key press   // 72 - up, 80 - down, 77-right, 75- left
 		while(i1!=99){
 			if(kbhit()){//if a key press is detected
 				i1=getch();//take the buffer of keyboard
-				if(i1==72 && (i2!=80 || reverse_snake))				i2=i1,move_snake(-1,'v');
-				else if(i1==80 && (i2!=72 || reverse_snake))			i2=i1,move_snake(1,'v');
-				else if(i1==75 && (i2!=77 || reverse_snake))			i2=i1,move_snake(-1,'h');
-				else if(i1==77 && (i2!=75 || reverse_snake))			i2=i1,move_snake(1,'h');
+				if(i1==72 && (i2!=80 || reverse_snake))				i2=i1,move_snake(-1,'v');  // move up vertically if up arrow key is pressed
+				else if(i1==80 && (i2!=72 || reverse_snake))			i2=i1,move_snake(1,'v'); // move down vertically if down arrow key is pressed
+				else if(i1==75 && (i2!=77 || reverse_snake))			i2=i1,move_snake(-1,'h'); // move right horizontally if right arrow key is pressed
+				else if(i1==77 && (i2!=75 || reverse_snake))			i2=i1,move_snake(1,'h'); // move left horizontally if left arrow key is pressed
 				else if(i1==112){//112- p    // if "p" key is pressed
 					pause_menu();  // run pause menu
 					while(1){//to not remove pause menu untill p is pressed again
@@ -256,7 +256,7 @@ int main(){
 						if(i1==112)
 						break;
 					}
-					remove_pause();       //to clear the screen
+					remove_pause();       //to clear the screen if p is pressed again
 				}
 				else 	goto congo;//if other than arrow key are pressed
 			}
