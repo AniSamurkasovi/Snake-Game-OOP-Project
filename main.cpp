@@ -50,7 +50,7 @@ namespace consolebackground//for background colour,  colours made using 4 attrib
 
 
 vector<int> snake;					//snake vector, to store position of snake in numbers
-bool food_eaten=1,colour=1,self_hit=1,reverse_snake=0;//for settings
+bool food_eaten=1,colour=1,self_hit=1;//for settings
 int width=27,lenght=118,food_x=-1,food_y=-2,hsc,time1=50; //hsc- high score
 
 void initialise_snake(){//making my starting snake
@@ -245,10 +245,10 @@ int main(){
 		while(i1!=99){
 			if(kbhit()){//if a key press is detected
 				i1=getch();//take the buffer of keyboard
-				if(i1==72 && (i2!=80 || reverse_snake))				i2=i1,move_snake(-1,'v');  // move up vertically if up arrow key is pressed
-				else if(i1==80 && (i2!=72 || reverse_snake))			i2=i1,move_snake(1,'v'); // move down vertically if down arrow key is pressed
-				else if(i1==75 && (i2!=77 || reverse_snake))			i2=i1,move_snake(-1,'h'); // move right horizontally if right arrow key is pressed
-				else if(i1==77 && (i2!=75 || reverse_snake))			i2=i1,move_snake(1,'h'); // move left horizontally if left arrow key is pressed
+				if(i1==72 && (i2!=80))				i2=i1,move_snake(-1,'v');  // move up vertically if up arrow key is pressed
+				else if(i1==80 && (i2!=72))			i2=i1,move_snake(1,'v'); // move down vertically if down arrow key is pressed
+				else if(i1==75 && (i2!=77))			i2=i1,move_snake(-1,'h'); // move right horizontally if right arrow key is pressed
+				else if(i1==77 && (i2!=75))			i2=i1,move_snake(1,'h'); // move left horizontally if left arrow key is pressed
 				else if(i1==112){//112- p    // if "p" key is pressed
 					pause_menu();  // run pause menu
 					while(1){//to not remove pause menu untill p is pressed again
@@ -267,7 +267,7 @@ int main(){
 				else if(i2==75)		move_snake(-1,'h');
 				else if(i2==77)		move_snake(1,'h');
 			}
-			if(check_interbody_death() && !reverse_snake && self_hit)	break;//body collision
+			if(check_interbody_death() && self_hit)	break;//body collision
 			if(snake.back()>lenght-1 || snake.back()<0 || snake[snake.end()-snake.begin()-2]<0 || snake[snake.end()-snake.begin()-2]>width-1)     break;//wall collision
 			if(food_y==snake.back() && food_x==snake[snake.end()-2-snake.begin()])	   eat_food();
 			print_highscore();
